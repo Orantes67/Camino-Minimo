@@ -44,20 +44,43 @@ public class Grafo {
     }
 
     public void agregarAristas(Scanner entrada) {
-        System.out.println("Indica la cantidad de aristas del grafo:");
-        int cantidadAristas = entrada.nextInt();
-
+        int cantidadAristas = 0;
+        boolean entradaValida = false;
+        do {
+            System.out.println("Indica la cantidad de aristas del grafo:");
+            while (!entrada.hasNextInt()) {
+                System.out.println("Ingrese un número válido.");
+                entrada.next(); // descarta la entrada no válida
+            }
+            cantidadAristas = entrada.nextInt();
+            entradaValida = true;
+        } while (!entradaValida || cantidadAristas <= 0);
+    
         for (int i = 0; i < cantidadAristas; i++) {
             System.out.println("Ingresa el vértice inicial de la arista:");
             String inicio = entrada.next();
             System.out.println("Ingresa el vértice final de la arista:");
             String fin = entrada.next();
-            System.out.println("Ingresa el peso de la arista:");
-            int peso = entrada.nextInt();
-
+    
+            int peso = 0;
+            entradaValida = false;
+            do {
+                System.out.println("Ingresa el peso de la arista (debe ser mayor que 0):");
+                while (!entrada.hasNextInt()) {
+                    System.out.println("Ingrese un número válido.");
+                    entrada.next(); // descarta la entrada no válida
+                }
+                peso = entrada.nextInt();
+                if (peso > 0) {
+                    entradaValida = true;
+                } else {
+                    System.out.println("El peso debe ser mayor que 0. Intente de nuevo.");
+                }
+            } while (!entradaValida);
+    
             Vertice verticeInicio = buscarVertice(inicio);
             Vertice verticeFin = buscarVertice(fin);
-
+    
             if (verticeInicio != null && verticeFin != null) {
                 Arista arista = new Arista(verticeInicio, verticeFin, peso);
                 verticeInicio.setAristas(arista);
@@ -66,7 +89,6 @@ public class Grafo {
             }
         }
     }
-
     private Vertice buscarVertice(String dato) {
         for (int i = 0; i < listaVertices.size(); i++) {
             Vertice vertice = listaVertices.get(i);
@@ -75,5 +97,13 @@ public class Grafo {
             }
         }
         return null;
+    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Grafo: \n");
+        for (Vertice vertice : listaVertices) {
+            sb.append(vertice.toString()).append("\n");
+        }
+        return sb.toString();
     }
 }

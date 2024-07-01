@@ -71,7 +71,7 @@ public class CaminoMinimo {
                 return;
             } else {
                 recuperaCamino(ultimo[v]);
-                System.out.print(" <-- " + grafo.getVertices().get(v).getDato());
+                System.out.print(" -->" + grafo.getVertices().get(v).getDato());
             }
         } else {
             System.out.print(grafo.getVertices().get(s).getDato());
@@ -90,4 +90,5 @@ public class CaminoMinimo {
         }
         return -1;
     }
+    
 }
