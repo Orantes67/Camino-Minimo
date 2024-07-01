@@ -15,53 +15,68 @@ public class CaminoMinimo {
         D = new int[n];
         F = new boolean[n];
     }
-
     void Dijkstra(Grafo g, String origen) {
         s = buscarIndiceVertice(origen);
         for (int i = 0; i < n; i++) {
             F[i] = false;
             D[i] = pesos[s][i];
-            ultimo[i] = s;
+            if (D[i] == Grafo.INFINITO) {
+                ultimo[i] = -1; // No hay camino directo
+            } else {
+                ultimo[i] = s;
+            }
         }
         F[s] = true;
         D[s] = 0;
         for (int i = 1; i < n; i++) {
             int v = minimo();
             F[v] = true;
-            for (int w = 1; w < n; w++)
-                if (!F[w])
-                    if (D[v] + pesos[v][w] < D[w]) {
-                        D[w] = D[v] + pesos[v][w];
-                        ultimo[w] = v;
-                    }
+            for (int w = 0; w < n; w++) {
+                if (!F[w] && pesos[v][w] != Grafo.INFINITO && D[v] != Grafo.INFINITO
+                        && D[v] + pesos[v][w] < D[w]) {
+                    D[w] = D[v] + pesos[v][w];
+                    ultimo[w] = v;
+                }
+            }
         }
     }
-
+    
     public int minimo() {
-        double mx = Grafo.INFINITO;
-        int v = 1;
-        for (int j = 0; j < n; j++)
-            if (!F[j] && (mx >= D[j])) {
-                mx = D[j];
-                v = j;
+        int minDist = Grafo.INFINITO;
+        int minIndex = -1;
+        for (int i = 0; i < n; i++) {
+            if (!F[i] && D[i] < minDist) {
+                minDist = D[i];
+                minIndex = i;
             }
-        return v;
+        }
+        return minIndex;
     }
+    
 
     public void recuperaCamino(String vertice) {
         int v = buscarIndiceVertice(vertice);
+        if (v == -1) {
+            System.out.println("Vértice no encontrado");
+            return;
+        }
         recuperaCamino(v);
+        System.out.println();
     }
-
+    
     public void recuperaCamino(int v) {
-        int anterior = ultimo[v];
         if (v != s) {
-            recuperaCamino(anterior);
-            System.out.println(grafo.getVertices().get(v).getDato() + " <-- ");
-        } else
-            System.out.println(grafo.getVertices().get(s).getDato());
+            if (ultimo[v] == -1) {
+                System.out.print("No hay camino desde " + grafo.getVertices().get(s).getDato() + " a " + grafo.getVertices().get(v).getDato());
+                return;
+            } else {
+                recuperaCamino(ultimo[v]);
+                System.out.print(" <-- " + grafo.getVertices().get(v).getDato());
+            }
+        } else {
+            System.out.print(grafo.getVertices().get(s).getDato());
+        }
     }
-
     public int getDistancia(String vertice) {
         int v = buscarIndiceVertice(vertice);
         return D[v];
